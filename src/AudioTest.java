@@ -16,7 +16,6 @@ import CMPC3M06.AudioRecorder;
 
 
 public class AudioTest {
-    i
     public static void main(String args[]) throws Exception {
         //Vector used to store audio blocks (32ms/512bytes each)
         Vector<byte[]> voiceVector = new Vector<byte[]>();
