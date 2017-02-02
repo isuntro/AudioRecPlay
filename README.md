@@ -1,3 +1,3 @@
-# AudioRecPlay
+# VoIP Communication System in Java
 
-![Alt text](https://postimg.org/image/og9kfdnjh/)
+![Alt text](https://s30.postimg.org/bove8vdrl/Capture.png)
