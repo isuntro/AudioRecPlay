@@ -26,7 +26,9 @@ Three classes simulating non-ideal channel conditions are provided:
 - DatagramSocket4
 
 **TODO:**
+
 1. Analysis of characteristics of the channels (Sending packets across the network and monitoring what is received)
+
 2. Design systems for each channel
 
 
