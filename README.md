@@ -20,11 +20,13 @@ On the receiving side the VoIP layer will receive packets from the transport lay
 them to the audio layer ready for playback. 
 **This can be achieved by combining the work in Labs 1, 2, and 3.**
 
-Such a system should work well under ideal network conditions. However, in this coursework three other
-DatagramSocket classes will be provided which simulate three non-ideal channel conditions:
+Three classes simulating non-ideal channel conditions are provided:
 - DatagramSocket2
 - DatagramSocket3
 - DatagramSocket4
 
+**TODO:**
+1. Analysis of characteristics of the channels (Sending packets across the network and monitoring what is received)
+2. Design systems for each channel
 
 
