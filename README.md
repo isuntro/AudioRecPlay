@@ -10,8 +10,10 @@ The aim of this assignment is to design, implement and evaluate a VoIP communica
 
 The VoIP layer will need to be developed for the sending machine and the receiving machine.
 **Sender:**
+
 The sender will need to take audio blocks from the audio layer and pass them down into the transport layer.
 **Receiver:**
+
 On the receiving side the VoIP layer will receive packets from the transport layer and will need to pass
 them to the audio layer ready for playback. 
 **This can be achieved by combining the work in Labs 1, 2, and 3.**
