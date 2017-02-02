@@ -13,8 +13,6 @@ import java.util.Iterator;
 import CMPC3M06.AudioPlayer;
 import CMPC3M06.AudioRecorder;
 
-// Testing push
-
 public class AudioTest {
     public static void main(String args[]) throws Exception {
         //Vector used to store audio blocks (32ms/512bytes each)
