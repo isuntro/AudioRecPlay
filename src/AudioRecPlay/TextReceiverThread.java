@@ -1,3 +1,5 @@
+package AudioRecPlay;
+
 /*
  * TextReceiver.java
  *
@@ -10,6 +12,8 @@
  */
 import java.net.*;
 import java.io.*;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class TextReceiverThread implements Runnable{
     
@@ -49,23 +53,28 @@ public class TextReceiverThread implements Runnable{
          
             try{
                 //Receive a DatagramPacket (note that the string cant be more than 80 chars)
-                byte[] buffer = new byte[80];
+                byte[] buffer = new byte[255];
                 DatagramPacket packet = new DatagramPacket(buffer, 0, buffer.length);
 
                 receiving_socket.receive(packet);
-
+                
+                Audio audio = new Audio();
+                audio.play(buffer);
+                
                 //Get a string from the byte buffer
-                String str = new String(buffer);
+                //String str = new String(buffer);
                 //Trim the string and display it
-                System.out.print(str.trim()+"\n");
+                //System.out.print(str.trim()+"\n");
                 
                 //The user can type EXIT to quit
-                if (str.substring(0,4).equals("EXIT")){
-                     running=false;
-                }
+//                if (str.substring(0,4).equals("EXIT")){
+//                     running=false;
+//                }
             } catch (IOException e){
                 System.out.println("ERROR: TextReceiver: Some random IO error occured!");
                 e.printStackTrace();
+            } catch (Exception ex) {
+                Logger.getLogger(TextReceiverThread.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
         //Close the socket

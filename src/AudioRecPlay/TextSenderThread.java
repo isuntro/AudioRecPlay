@@ -1,3 +1,5 @@
+package AudioRecPlay;
+
 /*
  * TextSender.java
  *
@@ -10,6 +12,9 @@
  */
 import java.net.*;
 import java.io.*;
+import java.util.Vector;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class TextSenderThread implements Runnable{
     
@@ -28,7 +33,7 @@ public class TextSenderThread implements Runnable{
         //IP ADDRESS to send to
         InetAddress clientIP = null;
 	try {
-		clientIP = InetAddress.getByName("xspc");  //CHANGE localhost to IP or NAME of client machine
+		clientIP = InetAddress.getByName("localhost");  //CHANGE localhost to IP or NAME of client machine
 	} catch (UnknownHostException e) {
                 System.out.println("ERROR: TextSender: Could not find client IP");
 		e.printStackTrace();
@@ -61,15 +66,18 @@ public class TextSenderThread implements Runnable{
         //Main loop.
         
         boolean running = true;
-        
         while (running){
             try{
                 //Read in a string from the standard input
-                String str = in.readLine();
+                //String str = in.readLine();
                 
                 //Convert it to an array of bytes
-                byte[] buffer = str.getBytes();
-               
+                //byte[] buffer = str.getBytes();
+                
+                // Record and get bytes
+                Audio audio = new Audio();
+                byte[] buffer = audio.getRecordBytes();
+                
                 //Make a DatagramPacket from it, with client address and port number
                 DatagramPacket packet = new DatagramPacket(buffer, buffer.length, clientIP, PORT);
             
@@ -77,13 +85,15 @@ public class TextSenderThread implements Runnable{
                 sending_socket.send(packet);
                 
                 //The user can type EXIT to quit
-                if (str.equals("EXIT")){
-                    running=false;
-                }
+//                if (str.equals("EXIT")){
+//                    running=false;
+//                }
 
             } catch (IOException e){
                 System.out.println("ERROR: TextSender: Some random IO error occured!");
                 e.printStackTrace();
+            } catch (Exception ex) {
+                Logger.getLogger(TextSenderThread.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
         //Close the socket
