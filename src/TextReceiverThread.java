@@ -50,14 +50,14 @@ public class TextReceiverThread implements Runnable{
             try{
                 //Receive a DatagramPacket (note that the string cant be more than 80 chars)
                 byte[] buffer = new byte[80];
-                DatagramPacket packet = new DatagramPacket(buffer, 0, 80);
+                DatagramPacket packet = new DatagramPacket(buffer, 0, buffer.length);
 
                 receiving_socket.receive(packet);
 
                 //Get a string from the byte buffer
                 String str = new String(buffer);
-                //Display it
-                System.out.print(str);
+                //Trim the string and display it
+                System.out.print(str.trim()+"\n");
                 
                 //The user can type EXIT to quit
                 if (str.substring(0,4).equals("EXIT")){
