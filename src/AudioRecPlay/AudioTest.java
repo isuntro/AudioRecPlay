@@ -25,7 +25,7 @@ public class AudioTest {
         AudioPlayer player = new AudioPlayer();
 
         //Recording time in seconds
-        int recordTime = 40;
+        int recordTime = 10;
 
         //Capture audio data and add to voiceVector
         System.out.println("Recording Audio...");

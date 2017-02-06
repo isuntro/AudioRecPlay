@@ -88,7 +88,7 @@ public class TextSenderThread implements Runnable{
 //                if (str.equals("EXIT")){
 //                    running=false;
 //                }
-
+                running = false;
             } catch (IOException e){
                 System.out.println("ERROR: TextSender: Some random IO error occured!");
                 e.printStackTrace();

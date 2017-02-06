@@ -53,8 +53,8 @@ public class TextReceiverThread implements Runnable{
          
             try{
                 //Receive a DatagramPacket (note that the string cant be more than 80 chars)
-                byte[] buffer = new byte[255];
-                DatagramPacket packet = new DatagramPacket(buffer, 0, buffer.length);
+                byte[] buffer = new byte[400];
+                DatagramPacket packet = new DatagramPacket(buffer, 0, 400);
 
                 receiving_socket.receive(packet);
                 
@@ -64,12 +64,13 @@ public class TextReceiverThread implements Runnable{
                 //Get a string from the byte buffer
                 //String str = new String(buffer);
                 //Trim the string and display it
-                //System.out.print(str.trim()+"\n");
+                //System.out.print(str);
                 
                 //The user can type EXIT to quit
 //                if (str.substring(0,4).equals("EXIT")){
 //                     running=false;
 //                }
+                running = false;
             } catch (IOException e){
                 System.out.println("ERROR: TextReceiver: Some random IO error occured!");
                 e.printStackTrace();
