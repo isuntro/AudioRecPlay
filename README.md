@@ -31,4 +31,10 @@ Three classes simulating non-ideal channel conditions are provided:
 
 2. Design systems for each channel
 
+**ASSESSMENT:**
+
+1. Quality of service under no packet loss - DatagramSocket(15%)
+2. Quality of service with DatagramSocket2(15%)
+3. Quality of service with DatagramSocket3 (10%)
+4. Quality of service with DatagramSocket4 (10%)
 
