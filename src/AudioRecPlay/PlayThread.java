@@ -5,6 +5,7 @@ import CMPC3M06.AudioPlayer;
 
 import javax.sound.sampled.LineUnavailableException;
 import java.io.IOException;
+import java.io.InterruptedIOException;
 import java.util.LinkedList;
 
 /**
@@ -43,9 +44,9 @@ public class PlayThread extends Thread{
                         } else {
                             // Play otherwise
                             player.playBlock(block);
-                            Thread.currentThread().wait(32);
+                            Thread.currentThread().wait(5);
                         }
-                    } catch (IOException | InterruptedException e) {
+                    } catch (IOException |InterruptedException e) {
                         e.printStackTrace();
                     }
                 }

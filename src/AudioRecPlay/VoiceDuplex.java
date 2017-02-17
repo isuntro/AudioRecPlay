@@ -17,8 +17,6 @@ public class VoiceDuplex {
     
     public static void main (String[] args){
 
-
-
         // Globals
         int PORT = 55555;
         InetSocketAddress connection = new InetSocketAddress("localhost", PORT);
