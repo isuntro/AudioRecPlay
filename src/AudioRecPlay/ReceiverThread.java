@@ -12,6 +12,7 @@ package AudioRecPlay;
 import java.net.*;
 import java.io.*;
 import Tools.AudioPacket;
+import uk.ac.uea.cmp.voip.DatagramSocket2;
 
 import javax.sound.sampled.LineUnavailableException;
 
@@ -36,23 +37,28 @@ public class ReceiverThread implements Runnable{
     
     public void run (){
         byte[] buffer;
-
+        int i=0;
         while (!Thread.interrupted()){
-            buffer = new byte[512];
+            buffer = new byte[513];
             DatagramPacket packet = new DatagramPacket(buffer, buffer.length);
 
             try{
                 //receiving_socket.setSoTimeout(1000);
                 receiving_socket.receive(packet);
+                i++;
             } catch (IOException e) {
                 e.printStackTrace();
                 continue;
             }
 
-            byte[] newBuff = new byte[packet.getLength()];
-            System.arraycopy(buffer, 0, newBuff, 0, packet.getLength());
+            byte[] newBuff = new byte[512];
+            System.arraycopy(buffer, 1, newBuff, 0, 512);
             AudioPacket ap = new AudioPacket(newBuff);
             // Add the packet to the buffer
+            System.out.println("Played packet " + buffer[0]);
+            if(i != buffer[0]) {
+                System.out.println("Lost Packet");
+            }
             player.addPacket(ap);
 
         }

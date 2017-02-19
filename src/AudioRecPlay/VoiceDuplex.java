@@ -6,6 +6,8 @@ package AudioRecPlay;
  * Created on 15 January 2003, 17:11
  */
 
+import uk.ac.uea.cmp.voip.DatagramSocket2;
+
 import javax.sound.sampled.LineUnavailableException;
 import java.net.*;
 
@@ -23,7 +25,7 @@ public class VoiceDuplex {
         DatagramSocket socket;
 
         try{
-           socket = new DatagramSocket(PORT);
+           socket = new DatagramSocket2(PORT);
 
             // Start receiver and sender
            new ReceiverThread(socket).start();

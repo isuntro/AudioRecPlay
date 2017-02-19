@@ -11,6 +11,8 @@ package AudioRecPlay;
  * @author  Diego Viteri
  */
 import CMPC3M06.AudioRecorder;
+import Tools.AudioPacket;
+import uk.ac.uea.cmp.voip.DatagramSocket2;
 
 import javax.sound.sampled.LineUnavailableException;
 import java.net.*;
@@ -39,11 +41,17 @@ public class SenderThread implements Runnable {
     public void run() {
         byte[] buffer;
         DatagramPacket packet;
+        int i=1;
         while (!Thread.interrupted()) {
             try {
-                System.out.println("Recording...");
-                buffer = recorder.getBlock();
-                packet = new DatagramPacket(buffer, buffer.length, connection);
+                //System.out.println("Recording...");
+                // create a new audio packet
+                // with newly recorded audio data
+                AudioPacket aPacket = new AudioPacket(recorder.getBlock());
+                if(i == 50) i=1;
+                System.out.println("Sent packet : " + i);
+                aPacket.setPacketID(i++);
+                packet = new DatagramPacket(aPacket.getBytes(), 513, connection);
                 sending_socket.send(packet);
             } catch (IOException e) {
                 e.printStackTrace();

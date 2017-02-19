@@ -34,10 +34,10 @@ public class PlayThread extends Thread{
                 if (!audioBuffer.isEmpty()) {
                     // Gets first element from the buffer
                     AudioPacket packet = audioBuffer.poll();
-                    byte[] block = packet.getBlock();
+                    byte[] block = packet.getData();
 
                     try {
-                        System.out.println("Playing...");
+                        //System.out.println("Playing...");
                         // Check if we losing packets
                         if (block.length == 0 || block == null) {
                             System.out.println("Lost packet!");

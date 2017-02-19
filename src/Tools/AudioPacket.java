@@ -8,17 +8,28 @@ package Tools;
  */
 public class AudioPacket {
     private int packetID;
-    private byte[] block;
+    private byte[] data;
 
     public AudioPacket(byte[] block){
-        this.block = block;
+        this.data = block;
     }
 
-    public byte[] getBlock(){
-        return block;
+    public byte[] getData(){
+        return data;
     }
 
     public int getPacketID(){
         return packetID;
+    }
+    public void setPacketID(int id){
+        this.packetID = id;
+    }
+    public byte[] getBytes(){
+        int metaSize = 1;
+        int size = this.data.length + metaSize;
+        byte[] bytes = new byte[size];
+        bytes[0] = (byte)packetID;
+        System.arraycopy(this.data, 0, bytes, metaSize, this.data.length);
+        return bytes;
     }
 }
