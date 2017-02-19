@@ -5,10 +5,63 @@
  */
 package Tools;
 
+import AudioRecPlay.ReceiverThread;
+import java.io.IOException;
+import java.net.DatagramPacket;
+import java.net.DatagramSocket;
+import java.net.InetSocketAddress;
+
 /**
- *
- * @author Didac
+ * 
+ * @author Diego Viteri
  */
 public class PacketProcessor {
+    
+    private final DatagramSocket socket;
+    private final ReceiverThread receiver;
+    
+    // Sender
+    
+    // Receiver
+    
+    public PacketProcessor(ReceiverThread receiver, DatagramSocket socket,
+                                InetSocketAddress conn){
+        this.receiver = receiver;
+        this.socket = socket;
+        
+    }
+    
+    /**
+     * Add a packet to the send buffer and send
+     * @param packet
+     * @throws IOException 
+     */
+    public void addPacket(DatagramPacket packet) throws IOException{
+        
+    }
+    
+    /**
+     * Send packets in the send buffer
+     */
+    public void sendPackets(int packetID) throws IOException {
+        
+    }
+    
+    /**
+     * Receives a packet from the network
+     * @param packet 
+     */
+    public void receive(DatagramPacket packet) {
+        
+    }
+    
+    /**
+     * Processes a packet
+     * @param packet 
+     */
+    public void processPacket(DatagramPacket packet){
+        
+    }
+    
     
 }
