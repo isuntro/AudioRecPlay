@@ -1,0 +1,10 @@
+<component name="libraryTable">
+  <library name="AudioRecPlay">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/out/production/AudioRecPlay/AudioRecPlay/AudioLib.jar!/" />
+      <root url="jar://$PROJECT_DIR$/out/production/AudioRecPlay/AudioRecPlay/voip.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>
