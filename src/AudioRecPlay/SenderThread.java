@@ -49,7 +49,7 @@ public class SenderThread implements Runnable {
                 // with newly recorded audio data
                 AudioPacket aPacket = new AudioPacket(recorder.getBlock());
                 if(i == 50) i=1;
-                System.out.println("Sent packet : " + i);
+                //System.out.println("Sent packet : " + i);
                 aPacket.setPacketID(i++);
                 packet = new DatagramPacket(aPacket.getBytes(), 513, connection);
                 sending_socket.send(packet);

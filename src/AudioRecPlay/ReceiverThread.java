@@ -59,10 +59,12 @@ public class ReceiverThread implements Runnable{
             System.arraycopy(buffer, 1, newBuff, 0, 512);
             AudioPacket ap = new AudioPacket(newBuff);
             // Add the packet to the buffer
-            //System.out.println("Played packet " + buffer[0]);
+            System.out.println("Played packet " + buffer[0]);
+            /*
             if(i != buffer[0]) {
                 System.out.println("Lost Packet");
             }
+            */
             player.addPacket(ap);
 
         }

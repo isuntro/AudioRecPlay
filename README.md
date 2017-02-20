@@ -38,3 +38,8 @@ Three classes simulating non-ideal channel conditions are provided:
 3. Quality of service with DatagramSocket3 (10%)
 4. Quality of service with DatagramSocket4 (10%)
 
+**DataGram properties:**
+    1. No loss or different order arrival of packets
+    2. Packet-loss mainly 1-2 but sometimes 3-4+
+    3. Rare packet-loss but highly disordered packets
+    4. Some sort of coruption in the packets 

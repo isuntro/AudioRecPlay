@@ -7,6 +7,7 @@ package Tools;
  * @author Diego Viteri
  */
 public class AudioPacket {
+    private static int metaSize = 1;
     private int packetID;
     private byte[] data;
 
@@ -18,14 +19,13 @@ public class AudioPacket {
         return data;
     }
 
-    public int getPacketID(){
+    public int getPackemtID(){
         return packetID;
     }
     public void setPacketID(int id){
         this.packetID = id;
     }
     public byte[] getBytes(){
-        int metaSize = 1;
         int size = this.data.length + metaSize;
         byte[] bytes = new byte[size];
         bytes[0] = (byte)packetID;
