@@ -12,6 +12,7 @@ package AudioRecPlay;
 import java.net.*;
 import java.io.*;
 import Tools.AudioPacket;
+import Tools.PacketProcessor;
 
 import javax.sound.sampled.LineUnavailableException;
 
@@ -19,11 +20,12 @@ public class ReceiverThread implements Runnable{
     
     static DatagramSocket receiving_socket;
     private PlayThread player;
-
+    private PacketProcessor packetProcessor;
+    
     public ReceiverThread(DatagramSocket socket) throws LineUnavailableException {
         //Open a socket to receive from on port PORT
         receiving_socket = socket;
-
+        
         // Get audio player ready
         player = new PlayThread();
         player.start();
@@ -49,10 +51,13 @@ public class ReceiverThread implements Runnable{
                 continue;
             }
 
+            // Process packet
+            packetProcessor.receive(packet);
+            
             byte[] newBuff = new byte[packet.getLength()];
             System.arraycopy(buffer, 0, newBuff, 0, packet.getLength());
             AudioPacket ap = new AudioPacket(newBuff);
-            // Add the packet to the buffer
+            // Add the packet to the player
             player.addPacket(ap);
 
         }

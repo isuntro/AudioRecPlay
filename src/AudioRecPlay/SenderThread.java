@@ -11,19 +11,18 @@ package AudioRecPlay;
  * @author  Diego Viteri
  */
 import CMPC3M06.AudioRecorder;
+import Tools.PacketProcessor;
 
 import javax.sound.sampled.LineUnavailableException;
 import java.net.*;
 import java.io.*;
-import java.util.Arrays;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 public class SenderThread implements Runnable {
 
-    private DatagramSocket sending_socket;
-    private InetSocketAddress connection;
+    private final DatagramSocket sending_socket;
+    private final InetSocketAddress connection;
     private final AudioRecorder recorder;
+    private PacketProcessor packetProcessor;
 
     public SenderThread(DatagramSocket socket, InetSocketAddress connection) throws LineUnavailableException {
         sending_socket = socket;
@@ -44,7 +43,9 @@ public class SenderThread implements Runnable {
                 System.out.println("Recording...");
                 buffer = recorder.getBlock();
                 packet = new DatagramPacket(buffer, buffer.length, connection);
-                sending_socket.send(packet);
+                packetProcessor.addPacket(packet);
+                
+                //sending_socket.send(packet);
             } catch (IOException e) {
                 e.printStackTrace();
             }

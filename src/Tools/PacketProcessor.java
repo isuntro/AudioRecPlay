@@ -18,16 +18,18 @@ import java.net.InetSocketAddress;
 public class PacketProcessor {
     
     private final DatagramSocket socket;
-    private final ReceiverThread receiver;
     
     // Sender
+    int pSequence;
     
     // Receiver
+    private final ReceiverThread receiver;
     
     public PacketProcessor(ReceiverThread receiver, DatagramSocket socket,
                                 InetSocketAddress conn){
         this.receiver = receiver;
         this.socket = socket;
+        pSequence = 0;
         
     }
     
@@ -37,13 +39,20 @@ public class PacketProcessor {
      * @throws IOException 
      */
     public void addPacket(DatagramPacket packet) throws IOException{
+        // Get basic packet
         
+        // Add type byte
+        
+        // Add sequence number byte(s)
+        
+        // Increment pSequence
     }
     
     /**
      * Send packets in the send buffer
+     * @throws java.io.IOException
      */
-    public void sendPackets(int packetID) throws IOException {
+    public void sendPackets() throws IOException {
         
     }
     
@@ -52,16 +61,28 @@ public class PacketProcessor {
      * @param packet 
      */
     public void receive(DatagramPacket packet) {
+        byte[] block = packet.getData();
+        
+        // Check type of block[0]
+        // If 1, it's a packet with parity
+        
+        // At the moment, just process the packet
+        processPacket(packet);
         
     }
     
     /**
      * Processes a packet
-     * @param packet 
+     * @param packet The received packet
      */
     public void processPacket(DatagramPacket packet){
+        byte[] block = packet.getData();
+        AudioPacket audioPacket = new AudioPacket(block);
+        // Decode the packet ID
+        audioPacket.packetID = block[0];
+        
+        
         
     }
-    
     
 }

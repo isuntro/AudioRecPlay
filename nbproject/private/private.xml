@@ -4,6 +4,7 @@
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
             <file>file:/Users/Didac/GitHub/AudioRecPlay/src/AudioRecPlay/ReceiverThread.java</file>
+            <file>file:/Users/Didac/GitHub/AudioRecPlay/src/Tools/PacketProcessor.java</file>
             <file>file:/Users/Didac/GitHub/AudioRecPlay/src/AudioRecPlay/PlayThread.java</file>
             <file>file:/Users/Didac/GitHub/AudioRecPlay/src/AudioRecPlay/VoiceDuplex.java</file>
             <file>file:/Users/Didac/GitHub/AudioRecPlay/src/Tools/AudioPacket.java</file>

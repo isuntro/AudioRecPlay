@@ -7,7 +7,7 @@ package Tools;
  * @author Diego Viteri
  */
 public class AudioPacket {
-    private int packetID;
+    public int packetID;
     private byte[] block;
 
     public AudioPacket(byte[] block){
@@ -18,7 +18,4 @@ public class AudioPacket {
         return block;
     }
 
-    public int getPacketID(){
-        return packetID;
-    }
 }

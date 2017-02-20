@@ -5,7 +5,6 @@ import CMPC3M06.AudioPlayer;
 
 import javax.sound.sampled.LineUnavailableException;
 import java.io.IOException;
-import java.io.InterruptedIOException;
 import java.util.LinkedList;
 
 /**
@@ -21,11 +20,30 @@ public class PlayThread extends Thread{
         player = new AudioPlayer();
         audioBuffer = new LinkedList<>();
     }
-
-    public void addPacket(AudioPacket packet){
+    
+    /**
+     * Adds packet without processing it
+     * Only used for simple DatagramSocket
+     * @param packet 
+     */
+    public synchronized void addPacket(AudioPacket packet){
         audioBuffer.add(packet);
     }
-
+    
+    /**
+     * Adds a frame of packets to the audioBuffer
+     * @param packets 
+     */
+    public synchronized void addPackets(AudioPacket[] packets){
+        for (AudioPacket ap : packets){
+            // TODO:
+            // If the audio packet is empty
+            // fill it
+            
+            audioBuffer.add(ap);
+        }
+    }
+    
     @Override
     public void run(){
         while(true){
@@ -37,7 +55,7 @@ public class PlayThread extends Thread{
                     byte[] block = packet.getBlock();
 
                     try {
-                        System.out.println("Playing...");
+                        System.out.println("Playing..." + packet.packetID);
                         // Check if we losing packets
                         if (block.length == 0 || block == null) {
                             System.out.println("Lost packet!");
