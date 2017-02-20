@@ -25,7 +25,7 @@ public class VoiceDuplex {
         DatagramSocket socket;
 
         try{
-           socket = new DatagramSocket3(PORT);
+           socket = new DatagramSocket2(PORT);
 
             // Start receiver and sender
            new ReceiverThread(socket).start();

@@ -37,34 +37,24 @@ public class ReceiverThread implements Runnable{
     
     public void run (){
         byte[] buffer;
-        int i=0;
         while (!Thread.interrupted()){
             // data size 512 + 1 ID byte
-            buffer = new byte[513];
+            buffer = new byte[514];
             DatagramPacket packet = new DatagramPacket(buffer, buffer.length);
 
             try{
                 //receiving_socket.setSoTimeout(1000);
                 receiving_socket.receive(packet);
-                i++;
-                if(i==50){
-                    i=1;
-                }
             } catch (IOException e) {
                 e.printStackTrace();
                 continue;
             }
 
             byte[] newBuff = new byte[512];
-            System.arraycopy(buffer, 1, newBuff, 0, 512);
+            System.arraycopy(buffer, 2, newBuff, 0, 512);
             AudioPacket ap = new AudioPacket(newBuff);
             // Add the packet to the buffer
-            System.out.println("Played packet " + buffer[0]);
-            /*
-            if(i != buffer[0]) {
-                System.out.println("Lost Packet");
-            }
-            */
+            System.out.println("Played packet " + buffer[0] + " sequence :" + buffer[1]);
             player.addPacket(ap);
 
         }

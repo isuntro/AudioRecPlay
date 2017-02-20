@@ -17,6 +17,7 @@ import uk.ac.uea.cmp.voip.DatagramSocket2;
 import javax.sound.sampled.LineUnavailableException;
 import java.net.*;
 import java.io.*;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -26,6 +27,8 @@ public class SenderThread implements Runnable {
     private DatagramSocket sending_socket;
     private InetSocketAddress connection;
     private final AudioRecorder recorder;
+    private static boolean interleave = true;
+    private ArrayList<AudioPacket> buffer;
 
     public SenderThread(DatagramSocket socket, InetSocketAddress connection) throws LineUnavailableException {
         sending_socket = socket;
@@ -39,23 +42,36 @@ public class SenderThread implements Runnable {
     }
 
     public void run() {
-        byte[] buffer;
         DatagramPacket packet;
-        int i=1;
+
         while (!Thread.interrupted()) {
             try {
-                //System.out.println("Recording...");
                 // create a new audio packet
                 // with newly recorded audio data
-                AudioPacket aPacket = new AudioPacket(recorder.getBlock());
-                if(i == 50) i=1;
-                //System.out.println("Sent packet : " + i);
-                aPacket.setPacketID(i++);
-                packet = new DatagramPacket(aPacket.getBytes(), 513, connection);
-                sending_socket.send(packet);
+                AudioPacket audioPack = new AudioPacket(recorder.getBlock());
+                if(interleave){
+                    processPackets(audioPack);
+                }
+                else {
+                    packet = new DatagramPacket(audioPack.getBytes(), 514, connection);
+                    sending_socket.send(packet);
+                }
             } catch (IOException e) {
                 e.printStackTrace();
             }
         }
+    }
+    public void processPackets(AudioPacket apacket) throws IOException {
+        buffer.add(apacket);
+        if(buffer.size() == 4){
+            sending_socket.send(new DatagramPacket(buffer.get(1).getBytes(),514,connection));
+            sending_socket.send(new DatagramPacket(buffer.get(3).getBytes(),514,connection));
+            sending_socket.send(new DatagramPacket(buffer.get(0).getBytes(),514,connection));
+            sending_socket.send(new DatagramPacket(buffer.get(2).getBytes(),514,connection));
+            buffer.clear();
+        }
+    }
+    public void interleaver(){
+
     }
 }
