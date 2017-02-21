@@ -14,7 +14,7 @@ import java.util.LinkedList;
  */
 public class PlayThread extends Thread{
 
-    private final LinkedList<AudioPacket> audioBuffer;
+    private final LinkedList<byte[]> audioBuffer;
     private final AudioPlayer player;
 
     public PlayThread() throws LineUnavailableException {
@@ -22,7 +22,7 @@ public class PlayThread extends Thread{
         audioBuffer = new LinkedList<>();
     }
 
-    public void addPacket(AudioPacket packet){
+    public void addPacket(byte[] packet){
         audioBuffer.add(packet);
     }
 
@@ -33,19 +33,14 @@ public class PlayThread extends Thread{
                 // If we have data
                 if (!audioBuffer.isEmpty()) {
                     // Gets first element from the buffer
-                    AudioPacket packet = audioBuffer.poll();
-                    byte[] block = packet.getData();
+
+
 
                     try {
-                        //System.out.println("Playing...");
-                        // Check if we losing packets
-                        if (block.length == 0 || block == null) {
-                            System.out.println("Lost packet!");
-                        } else {
-                            // Play otherwise
-                            player.playBlock(block);
-                            Thread.currentThread().wait(5);
-                        }
+                        byte[] frame = audioBuffer.poll();
+                        player.playBlock(frame);
+                        Thread.currentThread().wait(5);
+
                     } catch (IOException |InterruptedException e) {
                         e.printStackTrace();
                     }
@@ -53,4 +48,5 @@ public class PlayThread extends Thread{
             }
         }
     }
+
 }

@@ -35,14 +35,14 @@ public class ReceiverThread implements Runnable{
 	    thread.start();
     }
     
-    public void run (){
+    public void run () {
         byte[] buffer;
-        while (!Thread.interrupted()){
+        while (!Thread.interrupted()) {
             // data size 512 + 1 ID byte
             buffer = new byte[514];
             DatagramPacket packet = new DatagramPacket(buffer, buffer.length);
 
-            try{
+            try {
                 //receiving_socket.setSoTimeout(1000);
                 receiving_socket.receive(packet);
             } catch (IOException e) {
@@ -55,8 +55,18 @@ public class ReceiverThread implements Runnable{
             AudioPacket ap = new AudioPacket(newBuff);
             // Add the packet to the buffer
             System.out.println("Played packet " + buffer[0] + " sequence :" + buffer[1]);
-            player.addPacket(ap);
+            player.addPacket(newBuff);
 
         }
+    }
+    private AudioPacket[] processPackets(){
+        AudioPacket[] audPckets = new AudioPacket[4];
+        for(int i=0;i < 4; i++){
+            audPckets[i] = audioBuffer.get(deinterleaver(i));
+        }
+        return audPckets;
+    }
+    private int deinterleaver(int no){
+        return ((no % 2) * 2) + no/2;
     }
 }

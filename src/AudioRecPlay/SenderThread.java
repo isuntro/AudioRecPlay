@@ -1,7 +1,7 @@
 package AudioRecPlay;
 
 /*
- * TextSender.java
+ * SenderThread.java
  *
  * Created on 15 January 2003, 15:29
  */
@@ -30,7 +30,8 @@ public class SenderThread implements Runnable {
     private static boolean interleave = true;
     private ArrayList<AudioPacket> buffer;
 
-    public SenderThread(DatagramSocket socket, InetSocketAddress connection) throws LineUnavailableException {
+    public SenderThread(DatagramSocket socket, InetSocketAddress connection, boolean interleave) throws LineUnavailableException {
+        this.interleave = interleave;
         sending_socket = socket;
         this.connection = connection;
         recorder = new AudioRecorder();
@@ -61,17 +62,19 @@ public class SenderThread implements Runnable {
             }
         }
     }
-    public void processPackets(AudioPacket apacket) throws IOException {
-        buffer.add(apacket);
+    private void processPackets(AudioPacket apacket) throws IOException {
+        buffer.add(interleaver(apacket.getPacketID()),apacket);
         if(buffer.size() == 4){
-            sending_socket.send(new DatagramPacket(buffer.get(1).getBytes(),514,connection));
-            sending_socket.send(new DatagramPacket(buffer.get(3).getBytes(),514,connection));
-            sending_socket.send(new DatagramPacket(buffer.get(0).getBytes(),514,connection));
-            sending_socket.send(new DatagramPacket(buffer.get(2).getBytes(),514,connection));
+            for(AudioPacket aPack : buffer){
+                sending_socket.send(new DatagramPacket(aPack.getBytes(),514, connection));
+            }
             buffer.clear();
         }
     }
-    public void interleaver(){
-
+    private int interleaver(int no){
+        return ((no % 2) * 2) + no/2;
+    }
+    public static boolean isInterleaving(){
+        return interleave;
     }
 }
