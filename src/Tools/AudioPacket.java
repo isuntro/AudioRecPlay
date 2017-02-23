@@ -8,6 +8,8 @@ package Tools;
  */
 public class AudioPacket {
     public int packetID;
+    // Buffer it belongs to
+    public int bufferID;
     private byte[] block;
 
     public AudioPacket(byte[] block){

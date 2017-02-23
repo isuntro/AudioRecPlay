@@ -15,18 +15,18 @@ public class PlayThread extends Thread{
 
     private final LinkedList<AudioPacket> audioBuffer;
     private final AudioPlayer player;
-
+    
     public PlayThread() throws LineUnavailableException {
         player = new AudioPlayer();
         audioBuffer = new LinkedList<>();
     }
     
     /**
-     * Adds packet without processing it
-     * Only used for simple DatagramSocket
+     * Adds packet to the player buffer 
      * @param packet 
      */
-    public synchronized void addPacket(AudioPacket packet){
+    public synchronized void addAudioPacket(AudioPacket packet){
+        
         audioBuffer.add(packet);
     }
     
@@ -34,15 +34,40 @@ public class PlayThread extends Thread{
      * Adds a frame of packets to the audioBuffer
      * @param packets 
      */
-    public synchronized void addPackets(AudioPacket[] packets){
-        for (AudioPacket ap : packets){
-            // TODO:
-            // If the audio packet is empty
-            // fill it
-            
-            audioBuffer.add(ap);
+    public synchronized void addAudioPackets(AudioPacket[] packets, int pos){
+       // Check for null 
+        for (int i = 0; i < packets.length; i++){
+            if (packets[i] == null){
+                // Fill with silence
+                packets[i] = new AudioPacket(new byte[512]);
+                // TODO : FILL IT
+                packets[i].packetID = pos + i;
+                
+            }
+        audioBuffer.add(packets[i]);
         }
     }
+    
+    public synchronized void addDelayedPacket(AudioPacket packet){
+        int pos = 0;
+        // find the correct position for this packet
+        for (AudioPacket ap : audioBuffer) {
+                if (ap.packetID > packet.packetID) {
+                        if (pos != 0) {
+                            pos = audioBuffer.indexOf(ap);
+                            break;
+                        }
+                        else {
+                            return;
+                        }
+                }
+                pos++;
+        }
+        
+        audioBuffer.set(pos - 1, packet);
+    }
+    
+    
     
     @Override
     public void run(){
@@ -50,20 +75,26 @@ public class PlayThread extends Thread{
             synchronized (this) {
                 // If we have data
                 if (!audioBuffer.isEmpty()) {
+                    
                     // Gets first element from the buffer
                     AudioPacket packet = audioBuffer.poll();
                     byte[] block = packet.getBlock();
+                    
+                    //System.out.println("Playing: " + packet.packetID);
+                    System.out.println("Playing: " + packet.packetID + (block.length == 0 ? " MISSING PACKET" : ""));
+//                    if (block.length == 0) 
+//                        System.out.println("Missing packet");
+//                    else
+//                        System.out.println("Good packet");
+//                  
 
+                    
+                    
                     try {
-                        System.out.println("Playing..." + packet.packetID);
-                        // Check if we losing packets
-                        if (block.length == 0 || block == null) {
-                            System.out.println("Lost packet!");
-                        } else {
-                            // Play otherwise
-                            player.playBlock(block);
-                            Thread.currentThread().wait(5);
-                        }
+                        // Play 
+                        player.playBlock(block);
+                        Thread.currentThread().wait(16);
+                    
                     } catch (IOException |InterruptedException e) {
                         e.printStackTrace();
                     }
