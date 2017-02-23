@@ -29,7 +29,7 @@ public class VoiceDuplex {
 
             // Start receiver and sender
            new ReceiverThread(socket).start();
-           new SenderThread(socket, connection).start();
+           new SenderThread(socket, connection,true).start();
         } catch (SocketException e){
             System.out.println("Could not open UDP socket to receive from.");
             e.printStackTrace();

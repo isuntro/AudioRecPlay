@@ -12,15 +12,11 @@ package AudioRecPlay;
  */
 import CMPC3M06.AudioRecorder;
 import Tools.AudioPacket;
-import uk.ac.uea.cmp.voip.DatagramSocket2;
 
 import javax.sound.sampled.LineUnavailableException;
 import java.net.*;
 import java.io.*;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 public class SenderThread implements Runnable {
 
@@ -29,11 +25,13 @@ public class SenderThread implements Runnable {
     private final AudioRecorder recorder;
     private static boolean interleave = true;
     private ArrayList<AudioPacket> buffer;
+    public final static int I_SIZE = 2;
 
     public SenderThread(DatagramSocket socket, InetSocketAddress connection, boolean interleave) throws LineUnavailableException {
         this.interleave = interleave;
         sending_socket = socket;
         this.connection = connection;
+        buffer = new ArrayList<>();
         recorder = new AudioRecorder();
     }
 
@@ -54,7 +52,7 @@ public class SenderThread implements Runnable {
                     processPackets(audioPack);
                 }
                 else {
-                    packet = new DatagramPacket(audioPack.getBytes(), 514, connection);
+                    packet = new DatagramPacket(audioPack.getBytes(), AudioPacket.SIZE, connection);
                     sending_socket.send(packet);
                 }
             } catch (IOException e) {
@@ -62,17 +60,18 @@ public class SenderThread implements Runnable {
             }
         }
     }
-    private void processPackets(AudioPacket apacket) throws IOException {
-        buffer.add(interleaver(apacket.getPacketID()),apacket);
+    private void processPackets(AudioPacket packet) throws IOException {
+        buffer.add(packet);
         if(buffer.size() == 4){
-            for(AudioPacket aPack : buffer){
-                sending_socket.send(new DatagramPacket(aPack.getBytes(),514, connection));
+            for(int i=1; i < 5 ; i++){
+                int interPos = interleaver(i);
+                sending_socket.send(new DatagramPacket(buffer.get(interPos).getBytes(),AudioPacket.SIZE, connection));
             }
             buffer.clear();
         }
     }
     private int interleaver(int no){
-        return ((no % 2) * 2) + no/2;
+        return ((no % I_SIZE) * I_SIZE) + no/ I_SIZE;
     }
     public static boolean isInterleaving(){
         return interleave;

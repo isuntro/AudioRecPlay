@@ -23,7 +23,10 @@ public class PlayThread extends Thread{
     }
 
     public void addPacket(byte[] packet){
-        audioBuffer.add(packet);
+        byte[] audBuffer = new byte[AudioPacket.DATA_SIZE];
+        System.arraycopy(packet, AudioPacket.META_SIZE, audBuffer, 0, audBuffer.length);
+
+        audioBuffer.add(audBuffer);
     }
 
     @Override
@@ -38,8 +41,11 @@ public class PlayThread extends Thread{
 
                     try {
                         byte[] frame = audioBuffer.poll();
+                        if(frame == null || frame.length == 0){
+                            frame = new byte[AudioPacket.DATA_SIZE];
+                        }
                         player.playBlock(frame);
-                        Thread.currentThread().wait(5);
+                        Thread.currentThread().wait(15);
 
                     } catch (IOException |InterruptedException e) {
                         e.printStackTrace();
