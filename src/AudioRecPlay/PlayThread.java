@@ -23,6 +23,7 @@ public class PlayThread extends Thread{
     }
 
     public void addPacket(byte[] packet){
+        System.out.println(packet.length);
         byte[] audBuffer = new byte[AudioPacket.DATA_SIZE];
         System.arraycopy(packet, AudioPacket.META_SIZE, audBuffer, 0, audBuffer.length);
 
@@ -45,7 +46,7 @@ public class PlayThread extends Thread{
                             frame = new byte[AudioPacket.DATA_SIZE];
                         }
                         player.playBlock(frame);
-                        Thread.currentThread().wait(15);
+                        Thread.currentThread().wait(5);
 
                     } catch (IOException |InterruptedException e) {
                         e.printStackTrace();

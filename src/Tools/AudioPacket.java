@@ -1,5 +1,7 @@
 package Tools;
 
+import AudioRecPlay.SenderThread;
+
 /**
  * An audio packet (array of bytes)
  * The only reason this is declared as an object is to add some extra properties
@@ -13,17 +15,20 @@ public class AudioPacket {
     private int packetID;
     private int blockID;
     private byte[] data;
-    private static int i=1;
+    private static int i=0;
     private static int j=1;
     public AudioPacket(byte[] block){
         this.packetID = i;
         this.data = block;
         this.blockID = j;
-        if(i == 4) {
+        if(i == SenderThread.BLOCK_SIZE-1) {
             j++;
             i=0;
         }
-        i++;
+        else{
+            i++;
+        }
+
     }
     public byte[] getData(){
         return data;
@@ -36,8 +41,7 @@ public class AudioPacket {
         this.packetID = id;
     }
     public byte[] getBytes(){
-        int size = this.data.length + META_SIZE;
-        byte[] bytes = new byte[size];
+        byte[] bytes = new byte[SIZE];
         bytes[0] = (byte) packetID;
         bytes[1] = (byte) blockID;
         System.arraycopy(this.data, 0, bytes, META_SIZE, this.data.length);
