@@ -33,7 +33,7 @@ public class SenderThread implements Runnable {
         this.interleave = interleave;
         sending_socket = socket;
         this.connection = connection;
-        block = new AudioPacket[I_SIZE*I_SIZE];
+        block = new AudioPacket[BLOCK_SIZE];
         recorder = new AudioRecorder();
     }
 
@@ -44,7 +44,7 @@ public class SenderThread implements Runnable {
 
     public void run() {
         DatagramPacket packet;
-
+        DatagramPacket apack;
         while (!Thread.interrupted()) {
             try {
                 // create a new audio packet
@@ -59,11 +59,14 @@ public class SenderThread implements Runnable {
                         sending_socket.send(packet);
                     }
                 }
-                AudioPacket audioPacket = new AudioPacket(recorder.getBlock());
-                packCount++;
-                packet = new DatagramPacket(audioPacket.getBytes(), AudioPacket.SIZE, connection);
-                sending_socket.send(packet);
-                sending_socket.send(packet);
+                else {
+                    AudioPacket audioPacket = new AudioPacket(recorder.getBlock());
+                    packCount++;
+                    packet = new DatagramPacket(audioPacket.getBytes(), AudioPacket.SIZE, connection);
+                    apack = new DatagramPacket(audioPacket.getBytes(), AudioPacket.SIZE, connection);
+                    sending_socket.send(packet);
+                    sending_socket.send(apack);
+                }
             } catch (IOException e) {
                 e.printStackTrace();
             }

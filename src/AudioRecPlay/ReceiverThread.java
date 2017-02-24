@@ -45,7 +45,7 @@ public class ReceiverThread implements Runnable {
     public void run() {
         byte[] buffer;
         while (!Thread.interrupted()) {
-            if(!(this.receiving_socket instanceof DatagramSocket4)) {
+            if (!(this.receiving_socket instanceof DatagramSocket4)) {
                 // data size 512 + 2 ID byte
                 buffer = new byte[AudioPacket.SIZE];
                 DatagramPacket packet = new DatagramPacket(buffer, buffer.length);
@@ -53,6 +53,8 @@ public class ReceiverThread implements Runnable {
                 try {
                     //receiving_socket.setSoTimeout(1000);
                     receiving_socket.receive(packet);
+
+                    System.out.println(" Received " + buffer[0] + " " + buffer[1]);
                 } catch (IOException e) {
                     e.printStackTrace();
                     continue;
@@ -63,72 +65,74 @@ public class ReceiverThread implements Runnable {
                 if (SenderThread.isInterleaving()) {
                     processPackets(buffer, buffer[1]);
                 } else {
-                    System.out.println("Played packet " + buffer[0] + " sequence :" + buffer[1]);
+                    //System.out.println("Played packet " + buffer[0] + " sequence :" + buffer[1]);
                     player.addPacket(buffer);
                 }
-            }
-            buffer = new byte[AudioPacket.SIZE];
-            DatagramPacket packet = new DatagramPacket(buffer, buffer.length);
-            byte[] copy;
-            try {
-                //receiving_socket.setSoTimeout(1000);
-                receiving_socket.receive(packet);
-                copy = buffer;
-                receiving_socket.receive(packet);
-                pckCount++;
-            } catch (IOException e) {
-                e.printStackTrace();
-                continue;
-            }
-            if(buffer[0] == pckCount){
-                player.addPacket(buffer);
-            }
-            else{
-                player.addPacket(copy);
-            }
-            if(pckCount == 4){
-                pckCount = 0;
+            } else {
+                buffer = new byte[AudioPacket.SIZE];
+                DatagramPacket packet = new DatagramPacket(buffer, buffer.length);
+                byte[] copy = new byte[AudioPacket.SIZE];
+                DatagramPacket copyPack = new DatagramPacket(copy, copy.length);
+                try {
+                    //receiving_socket.setSoTimeout(1000);
+                    receiving_socket.receive(packet);
+                    receiving_socket.receive(copyPack);
+                    pckCount++;
+                } catch (IOException e) {
+                    e.printStackTrace();
+                    continue;
+                }
+                if (buffer.equals(copy)) {
+                    System.out.println(" SAME THING + PACKET :" + buffer[0] + "  or" + copy[0]);
+                }
+                if (buffer[0] == pckCount) {
+                    player.addPacket(buffer);
+                } else {
+                    player.addPacket(copy);
+                }
+                if (pckCount == 4) {
+                    pckCount = 0;
+                }
             }
         }
     }
 
     private void processPackets(byte[] buffer, byte blockID) {
-        if (currentBlock < blockID) {
+        if (currentBlock+1 == blockID) {
             concealLoss(this.block);
             currentBlock++;
-        } else {
+        }
             int position = buffer[0] % SenderThread.BLOCK_SIZE;
             this.block[position] = buffer;
             pckCount++;
 
             if (pckCount == SenderThread.BLOCK_SIZE) {
                 for (int i = 0; i < SenderThread.BLOCK_SIZE; i++) {
-                    System.out.println("Adding packet " + block[i][0] + "      Block : " + block[i][1]);
+                    //System.out.println("Adding packet " + block[i][0] + "      Block : " + block[i][1]);
                     player.addPacket(this.block[i]);
                 }
-                System.out.println(" Playing sequence : " + buffer[1]);
+                //System.out.println(" Playing sequence : " + buffer[1]);
                 currentBlock++;
                 pckCount = 0;
             }
-        }
     }
 
     private int deinterleaver(int no) {
         return ((no % SenderThread.I_SIZE) * SenderThread.I_SIZE) + no / SenderThread.I_SIZE;
     }
 
-    private void concealLoss(byte[][] buffer) {
+    private synchronized void concealLoss(byte[][] buffer) {
         for (byte[] frame : buffer) {
             if (frame[1] != currentBlock || frame == null || frame.length == 0) {
                 frame = silence();
-                System.out.println("Empty packet");
+                //System.out.println("Empty packet");
             } else {
-                System.out.println("Adding packet " + frame[0] + "      Block : " + frame[1]);
+                //System.out.println("Adding packet " + frame[0] + "      Block : " + frame[1]);
             }
             player.addPacket(frame);
         }
         pckCount = 0;
-        System.out.println(" Playing sequence :" + currentBlock);
+        //System.out.println(" Playing sequence :" + currentBlock);
     }
 
     private byte[] silence() {
