@@ -16,9 +16,13 @@ public class PlayThread extends Thread{
     private final LinkedList<AudioPacket> audioBuffer;
     private final AudioPlayer player;
     
-    public PlayThread() throws LineUnavailableException {
+    private int correctionMethod;
+    
+    public PlayThread(int correctionMethod) throws LineUnavailableException {
         player = new AudioPlayer();
         audioBuffer = new LinkedList<>();
+        
+        this.correctionMethod = correctionMethod;
     }
     
     /**
@@ -35,17 +39,31 @@ public class PlayThread extends Thread{
      * @param packets 
      */
     public synchronized void addAudioPackets(AudioPacket[] packets, int pos){
-       // Check for null 
-        for (int i = 0; i < packets.length; i++){
-            if (packets[i] == null){
-                // Fill with silence
-                packets[i] = new AudioPacket(new byte[512]);
-                // TODO : FILL IT
-                packets[i].packetID = pos + i;
-                
+        // 0 fill with silence
+        // 1 splice buffer
+        if (correctionMethod == 0){
+            // Check for null 
+            for (int i = 0; i < packets.length; i++){
+                if (packets[i] == null){
+                    // Fill with silence
+                    //packets[i] = new AudioPacket(new byte[0]);
+                    packets[i] = new AudioPacket(new byte[512]);
+                    packets[i].packetID = pos + i;
+
+                }
+            audioBuffer.add(packets[i]);
             }
-        audioBuffer.add(packets[i]);
+        } else if (correctionMethod == 1) {
+            // Drop the nulls and add the others sequentially
+            // effectively, splicing
+            for (AudioPacket packet : packets) {
+                if (packet != null) audioBuffer.add(packet);
+            }
+        } else if (correctionMethod == 2){
+            
         }
+        
+       
     }
     
     public synchronized void addDelayedPacket(AudioPacket packet){
@@ -63,6 +81,8 @@ public class PlayThread extends Thread{
                 }
                 pos++;
         }
+        if (pos == 0)
+            return;
         
         audioBuffer.set(pos - 1, packet);
     }
@@ -93,7 +113,19 @@ public class PlayThread extends Thread{
                     try {
                         // Play 
                         player.playBlock(block);
-                        Thread.currentThread().wait(16);
+                        
+                        if (correctionMethod == 1){
+                            Thread.currentThread().wait(32);
+                        } else {
+                            Thread.currentThread().wait(16);
+                        }
+                        // for datagram2, make it wait 32
+                        //
+                        
+                        // For datagram3, make it wait 16
+                        
+                        
+                        
                     
                     } catch (IOException |InterruptedException e) {
                         e.printStackTrace();
